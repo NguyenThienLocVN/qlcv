@@ -30,3 +30,10 @@ Mỗi trang hiện đang dùng dữ liệu mẫu. Khi tích hợp .NET/AngularJS
 - Màu active: `#1560c0`
 - Nền sidebar: `#0e3060`
 - Tiêu đề hệ thống: **HỆ THỐNG QUẢN LÝ CÔNG VIỆC**
+
+
+## Responsive menu
+- Trên màn hình >= 1024px: sidebar hiển thị cố định.
+- Trên tablet/mobile: sidebar ẩn ngoài khung nhìn và mở bằng nút hamburger trên header.
+- Có overlay tối, nút đóng, đóng khi bấm ra ngoài, bấm menu, nhấn ESC hoặc chuyển về desktop.
+- JavaScript nằm trực tiếp trong từng file HTML, không cần thêm thư viện.

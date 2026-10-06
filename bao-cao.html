@@ -20,20 +20,24 @@ tailwind.config = {
 </script>
 <style>
   body{font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif}
-  .nav-item{color:#dbeafe}.nav-item:hover{background:rgba(255,255,255,.10);color:#fff}.nav-item.active{background:#1560c0;color:#fff;font-weight:700;}
+  .nav-item{color:#dbeafe}.nav-item:hover{background:rgba(255,255,255,.10);color:#fff}.nav-item.active{background:#1560c0;color:#fff;}
   .thin-scroll::-webkit-scrollbar{width:7px;height:7px}.thin-scroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-<aside class="hidden lg:flex fixed inset-y-0 left-0 w-72 bg-[#0e3060] border-r border-[#0b2851] flex-col z-30 text-white">
-  <div class="min-h-20 px-4 py-3 flex items-center border-b border-white/10">
+<aside id="sidebar" class="flex fixed inset-y-0 left-0 w-72 bg-[#0e3060] border-r border-[#0b2851] flex-col z-50 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+  <div class="min-h-20 px-4 py-3 flex items-center border-b border-white/10 relative">
+    <button id="menuClose" type="button" class="lg:hidden absolute right-3 top-3 w-8 h-8 rounded-lg grid place-items-center text-blue-100 hover:text-white hover:bg-white/10" aria-label="Đóng menu">
+      <i data-lucide="x" class="w-5 h-5"></i>
+    </button>
     <img src="assets/logo-quan-ly-cong-viec.svg" alt="Logo Hệ thống quản lý công việc" class="w-12 h-12 rounded-full shrink-0 ring-2 ring-white/20 shadow-sm">
     <div class="ml-3 leading-tight"><div class="font-extrabold text-white text-[13px] tracking-wide">HỆ THỐNG QUẢN LÝ</div><div class="font-extrabold text-white text-[13px] tracking-wide mt-0.5">CÔNG VIỆC</div></div>
   </div>
   <nav class="p-3 text-sm space-y-1">
     <a data-nav="dashboard" href="index.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="layout-dashboard" class="w-4 h-4"></i>Bảng điều hành</a>
     <a data-nav="inbox" href="tiep-nhan-ai.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="inbox" class="w-4 h-4"></i>Văn bản đến</a>
+    <a data-nav="assign" href="phan-cong.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="git-pull-request-arrow" class="w-4 h-4"></i>Phân công</a>
     <a data-nav="tasks" href="nhiem-vu.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="list-checks" class="w-4 h-4"></i>Nhiệm vụ</a>
     <a data-nav="reports" href="bao-cao.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="bar-chart-3" class="w-4 h-4"></i>Báo cáo</a>
   </nav>
@@ -43,12 +47,18 @@ tailwind.config = {
     </div>
   </div>
 </aside>
+<div id="menuOverlay" class="fixed inset-0 bg-slate-950/45 z-40 hidden lg:hidden backdrop-blur-[1px]" aria-hidden="true"></div>
 
 <div class="lg:ml-72 min-h-screen">
 <header class="h-16 bg-white border-b border-slate-200 sticky top-0 z-20 flex items-center justify-between px-4 md:px-6">
-  <div>
+  <div class="flex items-center min-w-0">
+    <button id="menuToggle" type="button" class="lg:hidden mr-3 w-10 h-10 shrink-0 rounded-lg border border-slate-200 text-[#0e3060] grid place-items-center hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-[#1d75b0]/30" aria-label="Mở menu" aria-controls="sidebar" aria-expanded="false">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+    <div class="min-w-0">
     <h1 id="pageTitle" class="font-bold text-gov-900 text-lg"></h1>
-    <p id="pageSub" class="text-xs text-slate-500 hidden md:block"></p>
+    <p id="pageSub" class="text-xs text-slate-500 hidden md:block truncate"></p>
+    </div>
   </div>
   <div class="flex items-center gap-2">
     <button class="relative w-9 h-9 rounded-lg border border-slate-200 grid place-items-center hover:bg-slate-50"><i data-lucide="bell" class="w-4 h-4"></i><span class="absolute -top-1 -right-1 w-4 h-4 bg-dangerx text-white text-[10px] rounded-full grid place-items-center">3</span></button>
@@ -85,6 +95,55 @@ tailwind.config = {
 document.getElementById('pageTitle').textContent="B\u00e1o c\u00e1o & Dashboard";
 document.getElementById('pageSub').textContent="Truy xu\u1ea5t theo nhi\u1ec7m v\u1ee5, k\u1ebf ho\u1ea1ch v\u00e0 kho\u1ea3ng th\u1eddi gian";
 document.querySelector('[data-nav="reports"]')?.classList.add('active');
+const sidebar = document.getElementById('sidebar');
+const menuToggle = document.getElementById('menuToggle');
+const menuClose = document.getElementById('menuClose');
+const menuOverlay = document.getElementById('menuOverlay');
+
+function openMobileMenu() {
+  if (!sidebar || window.innerWidth >= 1024) return;
+  sidebar.classList.remove('-translate-x-full');
+  sidebar.classList.add('translate-x-0');
+  menuOverlay?.classList.remove('hidden');
+  document.body.classList.add('overflow-hidden');
+  menuToggle?.setAttribute('aria-expanded', 'true');
+  menuOverlay?.setAttribute('aria-hidden', 'false');
+}
+
+function closeMobileMenu() {
+  if (!sidebar) return;
+  sidebar.classList.add('-translate-x-full');
+  sidebar.classList.remove('translate-x-0');
+  menuOverlay?.classList.add('hidden');
+  document.body.classList.remove('overflow-hidden');
+  menuToggle?.setAttribute('aria-expanded', 'false');
+  menuOverlay?.setAttribute('aria-hidden', 'true');
+}
+
+menuToggle?.addEventListener('click', openMobileMenu);
+menuClose?.addEventListener('click', closeMobileMenu);
+menuOverlay?.addEventListener('click', closeMobileMenu);
+
+document.querySelectorAll('#sidebar a').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth < 1024) closeMobileMenu();
+  });
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeMobileMenu();
+});
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth >= 1024) {
+    menuOverlay?.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+    menuToggle?.setAttribute('aria-expanded', 'false');
+  } else if (!sidebar?.classList.contains('translate-x-0')) {
+    sidebar?.classList.add('-translate-x-full');
+  }
+});
+
 lucide.createIcons();
 </script>
 <script>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Văn bản đến | Điều hành công việc</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        gov: {50:'#f3f8fd',100:'#e5f1fb',200:'#c7e1f6',300:'#94c5eb',400:'#59a4dc',500:'#1d75b0',600:'#1d75b0',700:'#1d75b0',800:'#1560c0',900:'#0e4d8a',950:'#0e3060'},
+        tealx:{500:'#1fa3ad',600:'#17858e'},
+        successx:'#3f9b72', warningx:'#ed8d23', dangerx:'#c94b4b'
+      },
+      boxShadow:{soft:'0 8px 24px rgba(15,23,42,.06)'}
+    }
+  }
+}
+</script>
+<style>
+  body{font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif}
+  .nav-item{color:#dbeafe}.nav-item:hover{background:rgba(255,255,255,.10);color:#fff}.nav-item.active{background:#1560c0;color:#fff;font-weight:700;box-shadow:inset 3px 0 0 #fff}
+  .thin-scroll::-webkit-scrollbar{width:7px;height:7px}.thin-scroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+<aside class="hidden lg:flex fixed inset-y-0 left-0 w-72 bg-[#0e3060] border-r border-[#0b2851] flex-col z-30 text-white">
+  <div class="min-h-20 px-4 py-3 flex items-center border-b border-white/10">
+    <img src="assets/logo-quan-ly-cong-viec.svg" alt="Logo Hệ thống quản lý công việc" class="w-12 h-12 rounded-full shrink-0 ring-2 ring-white/20 shadow-sm">
+    <div class="ml-3 leading-tight"><div class="font-extrabold text-white text-[13px] tracking-wide">HỆ THỐNG QUẢN LÝ</div><div class="font-extrabold text-white text-[13px] tracking-wide mt-0.5">CÔNG VIỆC</div></div>
+  </div>
+  <nav class="p-3 text-sm space-y-1">
+    <a data-nav="dashboard" href="index.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="layout-dashboard" class="w-4 h-4"></i>Bảng điều hành</a>
+    <a data-nav="inbox" href="tiep-nhan-ai.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="inbox" class="w-4 h-4"></i>Văn bản đến</a>
+    <a data-nav="assign" href="phan-cong.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="git-pull-request-arrow" class="w-4 h-4"></i>Phân công</a>
+    <a data-nav="tasks" href="nhiem-vu.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="list-checks" class="w-4 h-4"></i>Nhiệm vụ</a>
+    <a data-nav="reports" href="bao-cao.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="bar-chart-3" class="w-4 h-4"></i>Báo cáo</a>
+  </nav>
+  <div class="mt-auto p-4 border-t border-white/10">
+    <div class="rounded-xl bg-white/10 p-3 text-xs text-blue-100">
+      Phiên bản giao diện mẫu 1.0
+    </div>
+  </div>
+</aside>
+
+<div class="lg:ml-72 min-h-screen">
+<header class="h-16 bg-white border-b border-slate-200 sticky top-0 z-20 flex items-center justify-between px-4 md:px-6">
+  <div>
+    <h1 id="pageTitle" class="font-bold text-gov-900 text-lg"></h1>
+    <p id="pageSub" class="text-xs text-slate-500 hidden md:block"></p>
+  </div>
+  <div class="flex items-center gap-2">
+    <button class="relative w-9 h-9 rounded-lg border border-slate-200 grid place-items-center hover:bg-slate-50"><i data-lucide="bell" class="w-4 h-4"></i><span class="absolute -top-1 -right-1 w-4 h-4 bg-dangerx text-white text-[10px] rounded-full grid place-items-center">3</span></button>
+    <div class="hidden sm:flex items-center gap-2 pl-2">
+      <div class="w-9 h-9 rounded-full bg-gov-700 text-white grid place-items-center text-xs font-bold">NV</div>
+      <div class="text-sm"><div class="font-semibold">Nguyễn Văn A</div><div class="text-xs text-slate-500">Lãnh đạo đơn vị</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="p-4 md:p-6 max-w-[1600px] mx-auto">
+<div class="grid xl:grid-cols-5 gap-5">
+<section class="xl:col-span-3 bg-white border rounded-2xl shadow-soft overflow-hidden">
+ <div class="p-4 border-b flex justify-between items-center"><div><h2 class="font-bold text-gov-900">Văn bản / nhiệm vụ mới tiếp nhận</h2><p class="text-xs text-slate-500">Nguồn: văn thư, nhập trực tiếp, tích hợp hệ thống</p></div><button class="bg-gov-700 text-white rounded-lg px-3 py-2 text-sm">+ Tiếp nhận mới</button></div>
+ <div class="p-4 space-y-3">
+  <div class="border rounded-xl p-4 bg-gov-50/40 ring-1 ring-gov-200">
+    <div class="flex justify-between gap-4"><div><div class="text-xs text-slate-500">Số 125/UBND-VP · 06/10/2026</div><div class="font-semibold mt-1">V/v báo cáo tiến độ thực hiện nhiệm vụ trọng tâm tháng 10</div></div><span class="h-fit px-2 py-1 text-xs rounded-full bg-cyan-50 text-cyan-700">AI đã đọc</span></div>
+    <div class="mt-3 text-xs text-slate-500">Cơ quan gửi: Văn phòng UBND tỉnh</div>
+  </div>
+  <div class="border rounded-xl p-4"><div class="text-xs text-slate-500">Phiếu giao việc nội bộ · 06/10/2026</div><div class="font-semibold mt-1">Rà soát kế hoạch kiểm tra quý IV</div></div>
+  <div class="border rounded-xl p-4"><div class="text-xs text-slate-500">Số 89/SNV-CCVC · 05/10/2026</div><div class="font-semibold mt-1">Tổng hợp số liệu công chức, viên chức</div></div>
+ </div>
+</section>
+<section class="xl:col-span-2 bg-white border rounded-2xl shadow-soft">
+ <div class="p-4 border-b"><h2 class="font-bold text-gov-900 flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-cyan-600"></i>AI hỗ trợ nhận diện</h2></div>
+ <div class="p-4 space-y-4 text-sm">
+  <div><label class="text-xs font-semibold text-slate-500">TÓM TẮT NỘI DUNG</label><div class="mt-1 rounded-xl bg-slate-50 p-3">Yêu cầu các đơn vị tổng hợp tiến độ các nhiệm vụ trọng tâm tháng 10 và gửi báo cáo trước ngày 12/10/2026.</div></div>
+  <div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-semibold text-slate-500">LOẠI NHIỆM VỤ</label><div class="mt-1 border rounded-lg p-2">Báo cáo định kỳ</div></div><div><label class="text-xs font-semibold text-slate-500">MỨC ĐỘ</label><div class="mt-1 border rounded-lg p-2">Quan trọng</div></div></div>
+  <div><label class="text-xs font-semibold text-slate-500">HẠN AI NHẬN DIỆN</label><div class="mt-1 border rounded-lg p-2 flex justify-between"><span>12/10/2026 17:00</span><span class="text-emerald-600">Tin cậy 96%</span></div></div>
+  <div><label class="text-xs font-semibold text-slate-500">ĐỀ XUẤT ĐƠN VỊ XỬ LÝ</label><div class="mt-1 border rounded-lg p-2">Phòng Tổng hợp</div></div>
+  <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 text-amber-800 text-xs">AI chỉ hỗ trợ nhận diện và đề xuất. Lãnh đạo/người có thẩm quyền xác nhận trước khi phân công.</div>
+  <div class="flex gap-2"><button class="flex-1 border rounded-lg py-2">Chỉnh sửa</button><a href="phan-cong.html" class="flex-1 text-center bg-gov-700 text-white rounded-lg py-2">Chuyển phân công</a></div>
+ </div>
+</section>
+</div>
+</main>
+</div>
+<script>
+document.getElementById('pageTitle').textContent="Ti\u1ebfp nh\u1eadn & AI h\u1ed7 tr\u1ee3";
+document.getElementById('pageSub').textContent="Ti\u1ebfp nh\u1eadn v\u0103n b\u1ea3n, \u0111\u1ecdc - nh\u1eadn di\u1ec7n - ph\u00e2n lo\u1ea1i v\u00e0 \u0111\u1ec1 xu\u1ea5t x\u1eed l\u00fd";
+document.querySelector('[data-nav="inbox"]')?.classList.add('active');
+lucide.createIcons();
+</script>
+
+</body></html>

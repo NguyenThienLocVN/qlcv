@@ -5,6 +5,7 @@
 - `tiep-nhan-ai.html`: Tiếp nhận văn bản/nhiệm vụ và AI hỗ trợ đọc, phân loại.
 - `phan-cong.html`: Giao lãnh đạo phụ trách, phòng/bộ phận, chuyên viên, hạn và mốc cảnh báo.
 - `nhiem-vu.html`: Danh sách/tra cứu nhiệm vụ.
+- `kpi-ca-nhan.html`: KPI cá nhân theo cán bộ: khối lượng, tiến độ, đúng hạn, chất lượng và công việc đang xử lý.
 - `chi-tiet-nhiem-vu.html`: Chi tiết nhiệm vụ, tiến độ, lịch sử cập nhật, đánh giá.
 - `bao-cao.html`: Báo cáo theo thời gian và dashboard biểu đồ.
 

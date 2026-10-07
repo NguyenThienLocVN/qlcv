@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KPI cá nhân | Quản lý công việc</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        gov: {50:'#f3f8fd',100:'#e5f1fb',200:'#c7e1f6',300:'#94c5eb',400:'#59a4dc',500:'#1d75b0',600:'#1d75b0',700:'#1d75b0',800:'#1560c0',900:'#0e4d8a',950:'#0e3060'},
+        tealx:{500:'#1fa3ad',600:'#17858e'},
+        successx:'#3f9b72', warningx:'#ed8d23', dangerx:'#c94b4b'
+      },
+      boxShadow:{soft:'0 8px 24px rgba(15,23,42,.06)'}
+    }
+  }
+}
+</script>
+<style>
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.nav-item{color:#dbeafe}.nav-item:hover{background:rgba(255,255,255,.10);color:#fff}.nav-item.active{background:#1560c0;color:#fff;font-weight:700}
+.thin-scroll::-webkit-scrollbar{width:7px;height:7px}.thin-scroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}
+.kpi-ring{background:conic-gradient(#1d75b0 0 86%,#e2e8f0 86% 100%)}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+<aside id="sidebar" class="flex fixed inset-y-0 left-0 w-72 bg-[#0e3060] border-r border-[#0b2851] flex-col z-50 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+  <div class="min-h-20 px-4 py-3 flex items-center border-b border-white/10 relative">
+    <button id="menuClose" type="button" class="lg:hidden absolute right-3 top-3 w-8 h-8 rounded-lg grid place-items-center text-blue-100 hover:text-white hover:bg-white/10" aria-label="Đóng menu"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <img src="assets/logo-quan-ly-cong-viec.svg" alt="Logo Hệ thống quản lý công việc" class="w-12 h-12 rounded-full shrink-0 ring-2 ring-white/20 shadow-sm">
+    <div class="ml-3 leading-tight"><div class="font-extrabold text-white text-[13px] tracking-wide">HỆ THỐNG QUẢN LÝ</div><div class="font-extrabold text-white text-[13px] tracking-wide mt-0.5">CÔNG VIỆC</div></div>
+  </div>
+  <nav class="p-3 text-sm space-y-1">
+    <a data-nav="dashboard" href="index.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="layout-dashboard" class="w-4 h-4"></i>Bảng điều hành</a>
+    <a data-nav="inbox" href="tiep-nhan-ai.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="inbox" class="w-4 h-4"></i>Văn bản đến</a>
+    <a data-nav="tasks" href="nhiem-vu.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="list-checks" class="w-4 h-4"></i>Nhiệm vụ</a>
+    <a data-nav="kpi" href="kpi-ca-nhan.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="gauge" class="w-4 h-4"></i>KPI cá nhân</a>
+    <a data-nav="reports" href="bao-cao.html" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg"><i data-lucide="bar-chart-3" class="w-4 h-4"></i>Báo cáo</a>
+  </nav>
+  <div class="mt-auto p-4 border-t border-white/10"><div class="rounded-xl bg-white/10 p-3 text-xs text-blue-100">Phiên bản giao diện mẫu v1.0</div></div>
+</aside>
+<div id="menuOverlay" class="fixed inset-0 bg-slate-950/45 z-40 hidden lg:hidden backdrop-blur-[1px]" aria-hidden="true"></div>
+
+<div class="lg:ml-72 min-h-screen">
+<header class="h-16 bg-white border-b border-slate-200 sticky top-0 z-20 flex items-center justify-between px-4 md:px-6">
+  <div class="flex items-center min-w-0">
+    <button id="menuToggle" type="button" class="lg:hidden mr-3 w-10 h-10 shrink-0 rounded-lg border border-slate-200 text-[#0e3060] grid place-items-center hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-[#1d75b0]/30" aria-label="Mở menu" aria-controls="sidebar" aria-expanded="false"><i data-lucide="menu" class="w-5 h-5"></i></button>
+    <div class="min-w-0"><h1 id="pageTitle" class="font-bold text-gov-900 text-lg"></h1><p id="pageSub" class="text-xs text-slate-500 hidden md:block truncate"></p></div>
+  </div>
+  <div class="flex items-center gap-2">
+    <button class="relative w-9 h-9 rounded-lg border border-slate-200 grid place-items-center hover:bg-slate-50"><i data-lucide="bell" class="w-4 h-4"></i><span class="absolute -top-1 -right-1 w-4 h-4 bg-dangerx text-white text-[10px] rounded-full grid place-items-center">3</span></button>
+    <div class="hidden sm:flex items-center gap-2 pl-2"><div class="w-9 h-9 rounded-full bg-gov-700 text-white grid place-items-center text-xs font-bold">NV</div><div class="text-sm"><div class="font-semibold">Nguyễn Văn A</div><div class="text-xs text-slate-500">Lãnh đạo đơn vị</div></div></div>
+  </div>
+</header>
+
+<main class="p-4 md:p-6 max-w-[1600px] mx-auto">
+  <section class="bg-white border rounded-2xl shadow-soft p-4 mb-5">
+    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-12 h-12 rounded-full bg-gov-100 text-gov-800 grid place-items-center font-extrabold shrink-0">NH</div>
+        <div class="min-w-0"><div class="flex flex-wrap items-center gap-2"><h2 class="font-bold text-gov-900">Nguyễn Thị Hương</h2><span class="px-2 py-1 rounded-full text-[11px] bg-emerald-50 text-emerald-700">Đang làm việc</span></div><p class="text-xs text-slate-500 mt-1">Chuyên viên · Phòng Tổng hợp</p></div>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-2 w-full xl:w-auto text-sm">
+        <select class="border rounded-lg px-3 py-2.5 bg-white"><option>Nguyễn Thị Hương</option><option>Lê Minh Anh</option><option>Phạm Quốc Việt</option></select>
+        <select class="border rounded-lg px-3 py-2.5 bg-white"><option>Tháng 10/2026</option><option>Tháng 09/2026</option><option>Quý IV/2026</option></select>
+        <button class="rounded-lg bg-gov-700 text-white px-4 py-2.5 flex items-center justify-center gap-2"><i data-lucide="download" class="w-4 h-4"></i>Xuất KPI</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid xl:grid-cols-12 gap-5 mb-5">
+
+    <section class="xl:col-span-12 grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="bg-white border rounded-2xl p-4 shadow-soft"><div class="flex justify-between"><div class="text-sm text-slate-500">Nhiệm vụ được giao</div><i data-lucide="clipboard-list" class="w-5 h-5 text-gov-600"></i></div><div class="text-3xl font-extrabold text-gov-800 mt-2">18</div><div class="text-xs text-slate-500 mt-2">12 hoàn thành · 6 đang xử lý</div></div>
+      <div class="bg-white border rounded-2xl p-4 shadow-soft"><div class="flex justify-between"><div class="text-sm text-slate-500">Hoàn thành đúng hạn</div><i data-lucide="circle-check-big" class="w-5 h-5 text-emerald-600"></i></div><div class="text-3xl font-extrabold text-emerald-600 mt-2">91,7%</div><div class="text-xs text-emerald-600 mt-2">11/12 nhiệm vụ hoàn thành</div></div>
+      <div class="bg-white border rounded-2xl p-4 shadow-soft"><div class="flex justify-between"><div class="text-sm text-slate-500">Việc sắp đến hạn</div><i data-lucide="alarm-clock" class="w-5 h-5 text-orange-500"></i></div><div class="text-3xl font-extrabold text-orange-500 mt-2">2</div><div class="text-xs text-orange-600 mt-2">Cần xử lý trong 3 ngày tới</div></div>
+      <div class="bg-white border rounded-2xl p-4 shadow-soft"><div class="flex justify-between"><div class="text-sm text-slate-500">Nhiệm vụ quá hạn</div><i data-lucide="triangle-alert" class="w-5 h-5 text-red-600"></i></div><div class="text-3xl font-extrabold text-red-600 mt-2">1</div><div class="text-xs text-red-600 mt-2">Quá hạn 1 ngày</div></div>
+    </section>
+  </div>
+
+  <div class="grid xl:grid-cols-5 gap-5 mb-5">
+    <section class="xl:col-span-3 bg-white border rounded-2xl shadow-soft overflow-hidden">
+      <div class="p-4 border-b flex flex-wrap items-center justify-between gap-3"><div><h3 class="font-bold text-gov-900">Công việc đang thực hiện</h3><p class="text-xs text-slate-500 mt-1">Ưu tiên theo hạn xử lý và mức độ nhiệm vụ</p></div><a href="nhiem-vu.html" class="text-sm text-gov-700 font-semibold hover:underline">Xem tất cả nhiệm vụ</a></div>
+      <div class="overflow-x-auto thin-scroll">
+        <table class="w-full text-sm min-w-[760px]">
+          <thead class="bg-slate-50 text-slate-600"><tr><th class="p-3 text-left">Nhiệm vụ</th><th class="p-3 text-left">Hạn xử lý</th><th class="p-3 text-left">Tiến độ</th><th class="p-3 text-left">Trạng thái</th></tr></thead>
+          <tbody class="divide-y">
+            <tr><td class="p-3"><a href="chi-tiet-nhiem-vu.html" class="font-semibold text-gov-700 hover:underline">Hoàn thiện báo cáo tổng hợp quý III</a><div class="text-xs text-slate-500 mt-1">CV-2026-0108 · Quan trọng</div></td><td class="p-3"><div class="font-medium">10/10/2026</div><div class="text-xs text-orange-600">Còn 3 ngày</div></td><td class="p-3"><div class="flex items-center gap-2"><div class="w-24 bg-slate-100 h-2 rounded-full"><div class="bg-orange-500 h-2 rounded-full" style="width:75%"></div></div><span class="text-xs font-semibold">75%</span></div></td><td class="p-3"><span class="px-2 py-1 rounded-full bg-orange-50 text-orange-700 text-xs">Sắp đến hạn</span></td></tr>
+            <tr><td class="p-3"><a href="chi-tiet-nhiem-vu.html" class="font-semibold text-gov-700 hover:underline">Tổng hợp số liệu tiến độ nhiệm vụ tháng 10</a><div class="text-xs text-slate-500 mt-1">CV-2026-0112 · Thường xuyên</div></td><td class="p-3"><div class="font-medium">15/10/2026</div><div class="text-xs text-slate-500">Còn 8 ngày</div></td><td class="p-3"><div class="flex items-center gap-2"><div class="w-24 bg-slate-100 h-2 rounded-full"><div class="bg-[#1d75b0] h-2 rounded-full" style="width:55%"></div></div><span class="text-xs font-semibold">55%</span></div></td><td class="p-3"><span class="px-2 py-1 rounded-full bg-blue-50 text-[#1560c0] text-xs">Đang làm</span></td></tr>
+            <tr><td class="p-3"><a href="chi-tiet-nhiem-vu.html" class="font-semibold text-gov-700 hover:underline">Cập nhật kế hoạch kiểm tra chuyên ngành</a><div class="text-xs text-slate-500 mt-1">CV-2026-0099 · Phối hợp</div></td><td class="p-3"><div class="font-medium text-red-600">06/10/2026</div><div class="text-xs text-red-600">Quá 1 ngày</div></td><td class="p-3"><div class="flex items-center gap-2"><div class="w-24 bg-slate-100 h-2 rounded-full"><div class="bg-red-500 h-2 rounded-full" style="width:90%"></div></div><span class="text-xs font-semibold">90%</span></div></td><td class="p-3"><span class="px-2 py-1 rounded-full bg-red-50 text-red-700 text-xs">Quá hạn</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="xl:col-span-2 bg-white border rounded-2xl shadow-soft p-5"><div class="flex justify-between gap-3"><div><h3 class="font-bold text-gov-900">Xu hướng KPI 6 tháng</h3><p class="text-xs text-slate-500 mt-1">Theo dõi mức độ ổn định và cải thiện hiệu suất</p></div></div><div class="mt-4 h-[245px]"><canvas id="trendChart"></canvas></div></section>
+  </div>
+
+  <section class="bg-white border rounded-2xl shadow-soft overflow-hidden">
+    <div class="p-4 border-b flex flex-wrap items-center justify-between gap-3"><div><h3 class="font-bold text-gov-900">Kết quả công việc đã hoàn thành</h3><p class="text-xs text-slate-500 mt-1">Nguồn dữ liệu phục vụ đánh giá KPI và đối chiếu chất lượng</p></div><button class="px-3 py-2 rounded-lg border text-sm flex items-center gap-2"><i data-lucide="filter" class="w-4 h-4"></i>Bộ lọc</button></div>
+    <div class="overflow-x-auto thin-scroll">
+      <table class="w-full text-sm min-w-[980px]"><thead class="bg-slate-50 text-slate-600"><tr><th class="p-3 text-left">Nhiệm vụ</th><th class="p-3 text-left">Ngày hoàn thành</th><th class="p-3 text-left">Đúng hạn</th><th class="p-3 text-left">Đánh giá kết quả</th><th class="p-3 text-left">Điểm quy đổi</th><th class="p-3 text-left">Ghi chú</th></tr></thead><tbody class="divide-y">
+        <tr><td class="p-3"><div class="font-semibold">Rà soát kế hoạch công tác quý IV</div><div class="text-xs text-slate-500">CV-2026-0094</div></td><td class="p-3">03/10/2026</td><td class="p-3"><span class="text-emerald-700 font-medium">Trước hạn 1 ngày</span></td><td class="p-3"><span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs">Tốt</span></td><td class="p-3 font-bold">9,2</td><td class="p-3 text-slate-500">Đủ nội dung, không yêu cầu sửa</td></tr>
+        <tr><td class="p-3"><div class="font-semibold">Tổng hợp báo cáo tuần 39</div><div class="text-xs text-slate-500">CV-2026-0091</div></td><td class="p-3">29/09/2026</td><td class="p-3"><span class="text-emerald-700 font-medium">Đúng hạn</span></td><td class="p-3"><span class="px-2 py-1 rounded-full bg-blue-50 text-[#1560c0] text-xs">Đạt</span></td><td class="p-3 font-bold">8,5</td><td class="p-3 text-slate-500">Bổ sung 01 phụ lục sau góp ý</td></tr>
+        <tr><td class="p-3"><div class="font-semibold">Cập nhật danh mục nhiệm vụ trọng tâm</div><div class="text-xs text-slate-500">CV-2026-0087</div></td><td class="p-3">24/09/2026</td><td class="p-3"><span class="text-red-600 font-medium">Chậm 1 ngày</span></td><td class="p-3"><span class="px-2 py-1 rounded-full bg-orange-50 text-orange-700 text-xs">Đạt</span></td><td class="p-3 font-bold">7,6</td><td class="p-3 text-slate-500">Chậm do chờ số liệu phối hợp</td></tr>
+      </tbody></table>
+    </div>
+    <div class="p-4 border-t flex flex-wrap justify-between gap-2 text-sm text-slate-500"><span>Hiển thị 3 nhiệm vụ gần nhất</span><span>KPI chỉ chốt khi nhiệm vụ đã có kết quả/đánh giá</span></div>
+  </section>
+</main>
+</div>
+<script>
+document.getElementById('pageTitle').textContent='KPI cá nhân';
+document.getElementById('pageSub').textContent='Theo dõi khối lượng, tiến độ, chất lượng và hiệu quả thực hiện công việc của cán bộ';
+document.querySelector('[data-nav="kpi"]')?.classList.add('active');
+
+const sidebar=document.getElementById('sidebar'),menuToggle=document.getElementById('menuToggle'),menuClose=document.getElementById('menuClose'),menuOverlay=document.getElementById('menuOverlay');
+function openMobileMenu(){if(!sidebar||window.innerWidth>=1024)return;sidebar.classList.remove('-translate-x-full');sidebar.classList.add('translate-x-0');menuOverlay?.classList.remove('hidden');document.body.classList.add('overflow-hidden');menuToggle?.setAttribute('aria-expanded','true');menuOverlay?.setAttribute('aria-hidden','false')}
+function closeMobileMenu(){if(!sidebar)return;sidebar.classList.add('-translate-x-full');sidebar.classList.remove('translate-x-0');menuOverlay?.classList.add('hidden');document.body.classList.remove('overflow-hidden');menuToggle?.setAttribute('aria-expanded','false');menuOverlay?.setAttribute('aria-hidden','true')}
+menuToggle?.addEventListener('click',openMobileMenu);menuClose?.addEventListener('click',closeMobileMenu);menuOverlay?.addEventListener('click',closeMobileMenu);document.querySelectorAll('#sidebar a').forEach(link=>link.addEventListener('click',()=>{if(window.innerWidth<1024)closeMobileMenu()}));document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMobileMenu()});window.addEventListener('resize',()=>{if(window.innerWidth>=1024){menuOverlay?.classList.add('hidden');document.body.classList.remove('overflow-hidden');menuToggle?.setAttribute('aria-expanded','false')}else if(!sidebar?.classList.contains('translate-x-0'))sidebar?.classList.add('-translate-x-full')});
+
+Chart.defaults.font.family='Inter, ui-sans-serif, system-ui, sans-serif';Chart.defaults.color='#64748b';
+new Chart(document.getElementById('weeklyChart'),{type:'bar',data:{labels:['Tuần 1','Tuần 2','Tuần 3','Tuần 4'],datasets:[{label:'Hoàn thành',data:[4,3,3,2],backgroundColor:'#1d75b0',borderRadius:6},{label:'Còn tồn',data:[6,5,4,6],backgroundColor:'#cbd5e1',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8}}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{stepSize:2},grid:{color:'#eef2f7'}}}}});
+new Chart(document.getElementById('trendChart'),{type:'line',data:{labels:['T5','T6','T7','T8','T9','T10'],datasets:[{label:'Điểm KPI',data:[78,80,79,83,82,86],borderColor:'#1d75b0',backgroundColor:'rgba(29,117,176,.10)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#1d75b0'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{min:60,max:100,ticks:{stepSize:10},grid:{color:'#eef2f7'}}}}});
+lucide.createIcons();
+</script>
+</body></html>
